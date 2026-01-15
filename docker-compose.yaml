@@ -1,0 +1,9 @@
+services:
+  flowable:
+    container_name: flowable
+    image: flowable/flowable-ui
+    ports:
+      - 8080:8080
+    volumes:
+      - ./flowable-db/:/home/flowable/flowable-db/
+      - ./flowable-java-class/target/flow-1.0-SNAPSHOT.jar:/app/WEB-INF/lib/flow-1.0-SNAPSHOT.jar
