@@ -7,3 +7,12 @@ services:
     volumes:
       - ./flowable-db/:/home/flowable/flowable-db/
       - ./flowable-java-class/target/flow-1.0-SNAPSHOT.jar:/app/WEB-INF/lib/flow-1.0-SNAPSHOT.jar
+      - ./flowable-java-class/target/flow-1.0-SNAPSHOT.jar:/app/WEB-INF/classes/flow-1.0-SNAPSHOT.jar
+
+  identity-verification:
+    container_name: identity-verification
+    environment:
+      - RUST_LOG=debug
+    build:
+      context: ./identity-verification
+      dockerfile: Dockerfile

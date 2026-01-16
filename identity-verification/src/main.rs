@@ -16,17 +16,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .try_init()
         .unwrap();
 
-    let app = Router::new().route("/check-claim", post(check_user));
+    let app = Router::new().route("/claim/validate", post(check_user));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    println!("listenning to 0.0.0.0:3000...");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:80").await.unwrap();
+    println!("listenning to 0.0.0.0:80...");
     // Ensure we use a shutdown signal to abort the œion task.
     axum::serve(listener, app.into_make_service())
         .with_graceful_shutdown(shutdown_signal())
         .await;
     return Ok(());
 }
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Claim {
     pub id: i64,
     pub name: String,
@@ -43,6 +43,7 @@ pub struct Claim {
 pub async fn check_user(
     extract::Json(claim): extract::Json<Claim>,
 ) -> Result<(http::StatusCode, axum::Json<bool>), ()> {
+    println!("Received claim: {:?}", claim);
     return Ok((StatusCode::OK, Json(true)));
 }
 

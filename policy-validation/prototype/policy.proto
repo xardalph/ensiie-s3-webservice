@@ -1,0 +1,21 @@
+syntax = "proto3";
+package policy;
+
+service validation {
+    rpc validate (Claim) returns (PolicyReturn);
+}
+
+message Claim {
+   string id = 1;
+   string name = 2;
+   string surname = 3;
+   string phoneNumer = 4;
+   string adress = 5;
+   int32 policyNumber = 6;
+   int32 claimType = 7;
+   string description = 8;
+}
+
+message PolicyReturn {
+    bool return = 1;
+}
