@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   flowable:
     container_name: flowable
@@ -8,6 +10,17 @@ services:
       - ./flowable-db/:/home/flowable/flowable-db/
       - ./flowable-java-class/target/flow-1.0-SNAPSHOT.jar:/app/WEB-INF/lib/flow-1.0-SNAPSHOT.jar
       - ./flowable-java-class/target/flow-1.0-SNAPSHOT.jar:/app/WEB-INF/classes/flow-1.0-SNAPSHOT.jar
+    depends_on:
+      - graphql
+      - identity-verification
+      - policy-validation
+
+  graphql:
+    container_name: graphql
+    build:
+      context: ./graphql
+    ports:
+      - 8081:8080
 
   identity-verification:
     container_name: identity-verification

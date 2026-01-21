@@ -1,0 +1,21 @@
+type Query {
+    determinateFraudRiskLevel(claim: ClaimInput!) : FraudRiskLevel!
+    isClaimRejected(riskLevel: FraudRiskLevel!, amount: Float!): Boolean!
+}
+
+input ClaimInput {
+    id : Int!
+    name : String!
+    surname : String!
+    phoneNumer: String!
+    address: String
+    policyNumber: Int!
+    claimType: Int!
+    description: String!
+}
+
+enum FraudRiskLevel {
+    LOW
+    MEDIUM
+    HIGH
+}
