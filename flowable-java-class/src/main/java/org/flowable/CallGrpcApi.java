@@ -1,3 +1,13 @@
+package org.flowable;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
+import policy.Claim;
+import policy.PolicyReturn;
+import policy.ValidationGrpc;
+
 public class CallGrpcApi implements JavaDelegate {
 
     static {
