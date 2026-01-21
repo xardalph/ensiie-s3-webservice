@@ -1,50 +1,40 @@
-use axum::body::Body;
-use hello_world::{GoodbyReply, HelloReply, HelloRequest};
-
+use policy::validation_server::{Validation, ValidationServer};
+use policy::{Claim, PolicyReturn};
+use tonic::codegen::Arc;
 use tonic::{Request, Response, Status, transport::Server};
-use tracing::{Level, Span, info};
 
-pub mod hello_world {
-    tonic::include_proto!("helloworld");
-}
-
-fn main() {
-    println!("Hello, world!");
-}
-
-pub struct TheGreeter {}
-pub mod proto {
+pub mod policy {
     tonic::include_proto!("policy");
-
-    pub(crate) const FILE_DESCRIPTOR_SET: &[u8] =
-        tonic::include_file_descriptor_set!("helloworld_descriptor");
 }
+
+#[derive(Default)]
+pub struct ValidationService {}
+
 #[tonic::async_trait]
-impl Greeter for TheGreeter {
-    async fn say_hello(
-        &self,
-        request: Request<HelloRequest>,
-    ) -> Result<Response<HelloReply>, Status> {
-        match request.remote_addr() {
-            Some(val) => println!("Got a request from {:?}", val),
-            None => println!("Got a request from a connexion that don't have any IP address."),
-        };
+impl Validation for ValidationService {
+    async fn validate(&self, request: Request<Claim>) -> Result<Response<PolicyReturn>, Status> {
+        let claim = request.into_inner();
 
-        let reply = hello_world::HelloReply {
-            message: format!("Hello {}!", request.into_inner().name),
-        };
+        // Example logic to validate the claim
+        let is_valid = !claim.id.is_empty() && claim.policy_number > 0;
+
+        let reply = PolicyReturn { r#return: is_valid };
+
         Ok(Response::new(reply))
     }
-    async fn say_goodbye(
-        &self,
-        request: tonic::Request<hello_world::GoodbyRequest>,
-    ) -> Result<Response<GoodbyReply>, Status> {
-        println!("Got a request from {:?}", request.remote_addr());
+}
 
-        let reply = hello_world::GoodbyReply {
-            message: format!("Goodbye {}!", request.into_inner().name),
-            detail: "text".to_string(),
-        };
-        Ok(Response::new(reply))
-    }
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "0.0.0.0:50051".parse()?;
+    let validation_service = ValidationService::default();
+
+    println!("ValidationService listening on {}", addr);
+
+    Server::builder()
+        .add_service(ValidationServer::new(validation_service))
+        .serve(addr)
+        .await?;
+
+    Ok(())
 }

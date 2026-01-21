@@ -1,8 +1,8 @@
 syntax = "proto3";
 package policy;
 
-service validation {
-    rpc validate (Claim) returns (PolicyReturn);
+service Validation {
+    rpc Validate (Claim) returns (PolicyReturn);
 }
 
 message Claim {

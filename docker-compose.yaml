@@ -16,3 +16,11 @@ services:
     build:
       context: ./identity-verification
       dockerfile: Dockerfile
+
+  policy-validation:
+    container_name: policy-validation
+    environment:
+      - RUST_LOG=debug
+    build:
+      context: ./policy-validation
+      dockerfile: Dockerfile
